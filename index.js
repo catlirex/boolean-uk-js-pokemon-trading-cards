@@ -1,45 +1,78 @@
 // write your code here!
 // This variable has the data you're working with
 
+const imageArray = []
+
 for(j = 0; j < data.length; j++){
 
-let cardsSection = document.querySelector(".cards")
+    let cardsSection = document.querySelector(".cards")
 
-let articleCard = document.createElement("article");
-articleCard.setAttribute("class", "card")
+    let articleCard = document.createElement("article");
+    articleCard.classList.add("card")
 
-cardsSection.append(articleCard);
+    cardsSection.append(articleCard);
 
-let h2Name = document.createElement("h2")
-h2Name.setAttribute("class","card--title")
-h2Name.innerText = data[j].name;
+    // NAME
+    let h2Name = document.createElement("h2")
+    h2Name.setAttribute("class","card--title")
+    h2Name.innerText = capitalizeFirstLetter(data[j].name);
 
-let imgCard = document.createElement("img")
-imgCard.setAttribute("class", "card--img")
-let imgLink = data[j]["sprites"]["other"]["official-artwork"]["front_default"]
-imgCard.setAttribute("src", imgLink)
-imgCard.setAttribute("width","256")
+    // IMAGE
+    let imgCard = document.createElement("img")
+    imgCard.classList.add("card--img")
+    imgCard.setAttribute("id", j)
+    let imgLink1 = data[j]["sprites"]["other"]["official-artwork"]["front_default"]
+    let imgLink2 = data[j]["sprites"]["other"]["dream_world"]["front_default"]
 
-let divCardText = document.createElement("div")
-divCardText.setAttribute("class","card--text")
+    imageArray[j] = [imgLink1, imgLink2]
 
-articleCard.prepend(h2Name, imgCard, divCardText )
 
-// STAT TEXT LOOP
-for(i = 0; i < 6; i++){
-var para = document.createElement("p");
-para.innerText = `${data[j]["stats"][i]["stat"]["name"].toUpperCase()}:${data[j]["stats"][i]["base_stat"]}`
-divCardText.append(para)
+    imgCard.setAttribute("src", imgLink1)
+    imgCard.setAttribute("width","256")
+
+    // Toggle between two image
+    imgCard.setAttribute("onclick", "changeImage(this.id)")
+
+    // CARD ELEMENT ORDER
+    let divCardText = document.createElement("div")
+    divCardText.setAttribute("class","card--text")
+    articleCard.prepend(h2Name, imgCard, divCardText )
+
+    // STAT TEXT LOOP
+    for(i = 0; i < 6; i++){
+        var para = document.createElement("p");
+        para.innerText = `${data[j]["stats"][i]["stat"]["name"].toUpperCase()}:${data[j]["stats"][i]["base_stat"]}`
+        divCardText.append(para)
+    }
+
+    //GAME VERSION LIST
+    const gameVersionList = []
+    for (i = 0; i < data[j]["game_indices"].length; i++){
+        let gameVersion = data[j]["game_indices"][i]["version"]["name"]
+        gameVersionList.push(capitalizeFirstLetter(gameVersion))
+    }
+
+    let paraGameAppear = document.createElement("p")
+
+    para.innerText = `Game Version:
+
+    ${gameVersionList.join(" / ")}`
+
 }
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+function changeImage(j) {
+    if (document.getElementById(j).src === imageArray[j][0]) {
+        document.getElementById(j).src = imageArray[j][1];
+    }
+    else {
+        document.getElementById(j).src = imageArray[j][0];
+    }       
 }
-
-// - Create a card using JS that represents a single pokemon, use the example image as a reference. You will also find an HTML example commented out in the index.html
-// - Use the exact CSS classes you see in the example HTML to obtain the same style for each card
-// - The cards should be nested inside <section class="cards"></section>
-// - Use the official-artwork object key as the images for the card. The images are all inside of the sprites key, in each pokemon object
-// - Render all the cards on the page that represents all the pokemons, recreating the same layout, using JS
-
-
-
+    
 console.log(data);
+
+console.log(imageArray)
